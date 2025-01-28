@@ -1,18 +1,12 @@
 {
-  "periodeSuivante": 2,
-  "ouvriers": 1050,
-  "vendeurs": 57,
+  "T": 2,
+  "OUVRIERS": 1050,
+  "VENDEURS": 57,
   "MX": 10,
   "MY": 1,
   "QUALITE": 20,
-  "STOCKSPF": [{ "Elite": 39409 }, { "2000": 20054 }, { "Raquette": 0 }],
-  "STOCKSMP": [{ "FIBRE": 1200  }, { "RESINE": 150 }, { "RECYCLEPOURCENTAGE_FIBRE": 25.23 }, { "RECYCLEPOURCENTAGE_RESINE": 18.64 }],
-  "VENTES": [{ "Elite": 127338 }, { "2000": 79946 }, { "Raquette": 10000 }],
-  "PRIX": [{ "Elite": 119.99 }, { "2000": 139.99 }, { "Raquette": 99.99 }],
-  "PUB": [{ "Elite": 500 }, { "2000": 20 }, { "Raquette": 400 }],
-  "ETUDE": [{ "SKI": false }, { "RAQUETTE": false }, { "ANALYTIQUE": false }],
-  "R&D": 100,
-  "ACHAT_MX":0,
-  "ACHAT_MY":0,
-  
+  "STOCKSPF": { "Elite": 39409, "2000": 20054 , "Raquette": 0 },
+  "STOCKSMP": { "FIBRE": 1200  ,"RESINE": 150 , "RECYCLEPOURCENTAGE_FIBRE": 25.23 , "RECYCLEPOURCENTAGE_RESINE": 18.64 },
+  "AGE_MX" : [11, 11, 11, 11, 11, 11, 11, 11, 11, 11],
+  "AGE_MY" : [1]
 }

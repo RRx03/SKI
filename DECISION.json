@@ -1,0 +1,19 @@
+{
+  "PRIX": { "Elite": 119.99 , "2000": 139.99 , "Raquette": 99.99 },
+  "PROD": { "Elite": 100 , "2000": 0 , "Raquette": 0 },
+  "PREV_VOLUME_VENTE": [{ "Elite": 70 }, { "2000": 70 }, { "Raquette": 70 }],
+  "PUB": { "Elite": 500 , "2000": 20 , "Raquette": 400 },
+  "ETUDE": { "SKI": false , "RAQUETTE": false , "ANALYTIQUE": false },
+  "QUALITE": 20,
+  "R&D": 100,
+  "ACHATS_STOCK": { "FIBRE": 0, "RESINE": 0 ,"RECYCLEPOURCENTAGE_FIBRE": 0 , "RECYCLEPOURCENTAGE_RESINE": 0 },
+  "NEW_MX": 10,
+  "NEW_MY": 1,
+  "NEW_OUVRIERS": 0,
+  "NEW_VENDEURS": 0,
+  "EMPRUNTS": { "CT": 39409 , "LT": 20054 , "ESCOMPTE": 0 },
+  "DIVIDENDES" : 0,
+  "PROD_ECO" : 0,
+  "QVT" : 0
+  
+}

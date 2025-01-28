@@ -1,3 +1,34 @@
 import json
-x = open("ACTU.json", "r").read()
-ACTU = json.loads(x)
+ACTULOAD = open("ACTU.json", "r").read()
+DECILOAD = open("PREVISIONNEL.json", "r").read()
+PREVLOAD = open("PREVISIONNEL.json", "w")
+
+ACTU = json.loads(ACTULOAD)
+DECI = json.loads(DECILOAD)
+
+SALAIRE_OUVRIER = 7.5
+EMBAUCHE_OUVRIER = 0.75
+SALAIRE_VENDEUR = 12.5
+MANAGEMENT_FIXE = 3000
+PRIX_SALAIRE_TOT = SALAIRE_OUVRIER*ACTU["OUVRIERS"] + SALAIRE_VENDEUR*ACTU["VENDEURS"] + MANAGEMENT_FIXE + EMBAUCHE_OUVRIER*DECI["NEW_VENDEURS"]
+PROD_TOT = ACTU["PROD"]["Elite"] + ACTU["PROD"]["2000"] + ACTU["PROD"]["Raquette"]
+PRIX_MATERIAUX = [5, 1.25, 6, 1.63]
+
+
+def CALCUL_PRIX_PROD():
+  #PUB, salaire ouvrier, materiaux, salaire vendeur, management
+  #PUB
+  PRIX_ELITE = DECI["PUB"]["ELITE"]/ACTU["PROD"]["Elite"]
+  PRIX_2000 = DECI["PUB"]["2000"]/ ACTU["PROD"]["2000"]
+  PRIX_RAQUETTE = DECI["PUB"]["Raquette"] / ACTU["PROD"]["Raquette"]
+  #definir le prix main d'oeuvre selon la production 
+  PRIX_ELITE += PRIX_SALAIRE_TOT / PROD_TOT
+  PRIX_2000 += PRIX_SALAIRE_TOT / PROD_TOT
+  PRIX_RAQUETTE += PRIX_SALAIRE_TOT / PROD_TOT
+  #Materiaux
+  PRIX_ELITE += 16*PRIX_MATERIAUX[0] + 4*PRIX_MATERIAUX[1]
+  PRIX_2000 += 4*PRIX_MATERIAUX[0] + 16*PRIX_MATERIAUX[1]
+  PRIX_RAQUETTE += 5*PRIX_MATERIAUX[0] + 5*PRIX_MATERIAUX[1]
+  return [PRIX_ELITE, PRIX_2000, PRIX_RAQUETTE]
+  
+print(CALCUL_PRIX_PROD())
