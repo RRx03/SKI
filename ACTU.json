@@ -18,5 +18,7 @@
     "RESINE": 675,
     "RECYCLE_FIBRE": 40.0,
     "RECYCLE_RESINE": 39.85
-  }
+  },
+  "ESCOMPTE": 60.0,
+  "TREZO": 33459,
 }

@@ -319,8 +319,8 @@ def CA_EXACT():
         "\n",
     )
 
-DECAISSEMENT = COUT_MAT_ACTU() + 2500*DECI["NEW_MX"] + 2000*DECI["NEW_MY"] + COUT_MAIN_DOEUVRE + COUT_COMMERCIAUX + ADMINISTRATION #(+IMPOTS+emprunts etc)
-
+DECAISSEMENT = COUT_MAT_ACTU() + 2500*DECI["NEW_MX"] + 2000*DECI["NEW_MY"] + COUT_MAIN_DOEUVRE + COUT_COMMERCIAUX + ADMINISTRATION #(+IMPOTS+emprunts etc) + Bon de caisse
+ENCAISSEMENT = (100-ACTU["ESCOMPTE"])/100 * CA_EXACT() + DECI["ESCOMPTE"]/100 * CA_PREV() + DECI["EMPRUNTS"]["CT"] + DECI["EMPRUNTS"]["LT"] + ACTU["TREZO"] #+Bons de caisse 
 print("Couts ouvriers : ", COUT_MAIN_DOEUVRE)
 print("COUT_COMMERCIAUX : ", COUT_COMMERCIAUX)
 print("\n")
@@ -349,3 +349,4 @@ print("Couts Production Prévisionnel : ", CALCUL_COUT_PROD_PREV())
 print("Couts Matériaux Prévisionnel : ", COUT_MAT_PREV())
 print("Couts Matériaux Actuel : ", COUT_MAT_ACTU())
 print("Décaissement : ", DECAISSEMENT)
+print("Encaissement : ", ENCAISSEMENT)

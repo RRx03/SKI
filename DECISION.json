@@ -12,8 +12,9 @@
   "NEW_MY": 0,
   "NEW_OUVRIERS": 200,
   "NEW_VENDEURS": 0,
-  "EMPRUNTS": { "CT": 0 , "LT": 0 , "ESCOMPTE": 0 },
+  "EMPRUNTS": { "CT": 0 , "LT": 0},
   "DIVIDENDES" : 0,
   "PROD_ECO" : 1500,
-  "QVT" : 2000
+  "QVT" : 2000,
+  "ESCOMPTE": 60 
 }
