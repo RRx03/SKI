@@ -1,8 +1,8 @@
 {
-  "PRIX": { "Elite": 229.99 , "2000": 149.99, "Raquette": 154.99 },
-  "PROD": { "Elite": 124, "2000": 100 , "Raquette": 176 },
-  "PUB": { "Elite": 700 , "2000": 600 , "Raquette": 1100	 },
-  "PREV_VOLUME_VENTE": { "Elite": 90 , "2000": 80 , "Raquette": 80 },
+  "PRIX": { "Elite": 244.99 , "2000": 164.99, "Raquette": 139.99 },
+  "PROD": { "Elite": 225, "2000": 125 , "Raquette": 125 },
+  "PUB": { "Elite": 1000 , "2000": 600 , "Raquette": 1400},
+  "PREV_VOLUME_VENTE": { "Elite": 70 , "2000": 90 , "Raquette": 60},
   "ETUDE": { "SKI": 1 , "Raquette": 1 , "ANALYTIQUE": 0 },
   "RECYCLE": { "FIBRE": 50  ,"RESINE": 50},
   "QUALITE": 20,
