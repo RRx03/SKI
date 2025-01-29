@@ -1,24 +1,22 @@
 {
-  "T": 4,
+  "T": 7,
   "OUVRIERS": 2000,
-  "VENDEURS": 87,
-  "STOCKSPF": { "Elite": 0, "2000": 0, "Raquette": 131087 },
-  "STOCKSMP": {
-    "FIBRE": 100,
-    "RESINE": 675,
-    "RECYCLEPOURCENTAGE_FIBRE": 40.0,
-    "RECYCLEPOURCENTAGE_RESINE": 39.85
-  },
-  "AGE_MX": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, -2],
+  "VENDEURS": 113,
+  "AGE_MX": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, -2, -4, -4, -6, -6, -6],
   "AGE_MY": [-1, -3, -3, -3, -3, -3],
-  "VENTES": { "Elite": 98867, "2000": 139000, "Raquette": 89913 },
-  "PRIX": { "Elite": 219.99, "2000": 144.99, "Raquette": 149.99 },
+
+  "PRIX": { "Elite": 229.99, "2000": 154.99, "Raquette": 134.99 },
+  "VENTES": { "Elite": 300000  , "2000": 99000, "Raquette": 51750},
+  "STOCKSPF": { "Elite": 0  , "2000": 0, "Raquette": 102843},
+
   "STOCKS_ACHETE": {
-    "FIBRE": 100,
-    "RESINE": 675,
-    "RECYCLE_FIBRE": 40.0,
-    "RECYCLE_RESINE": 39.85
+    "FIBRE": 3250,
+    "RESINE": 4750,
+    "RECYCLE_FIBRE": 50.0,
+    "RECYCLE_RESINE": 50.0
   },
+  "PRIX_MATERIAUX" : [5.6, 1.90, 6.72, 2.47],
+
   "ESCOMPTE": 60.0,
-  "TREZO": 33459,
+  "TREZO": 1629
 }

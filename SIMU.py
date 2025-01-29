@@ -20,7 +20,8 @@ ADMINISTRATION = 3000
 MAITRISE_FIXE = 1750
 MAX_PROD_MX = 35000
 MAX_PROD_MY = 25000
-PRIX_MATERIAUX = [5.5, 1.75, 6.6, 2.28]
+VAR_MAX = 22
+
 
 
 COUT_MAIN_DOEUVRE = (
@@ -28,7 +29,7 @@ COUT_MAIN_DOEUVRE = (
         SALAIRE_OUVRIER * (ACTU["OUVRIERS"] + DECI["NEW_OUVRIERS"])
         + EMBAUCHE_OUVRIER * DECI["NEW_OUVRIERS"]
     )
-    + 1750
+    + MAITRISE_FIXE
 )
 COUT_COMMERCIAUX = ceil(
     SALAIRE_VENDEUR * (ACTU["VENDEURS"] + DECI["NEW_VENDEURS"])
@@ -67,37 +68,37 @@ CHARGE_AMORTISSEMENT_MY = 100 * (len(ACTU["AGE_MY"]) + DECI["NEW_MY"])
 CHARGE_AMORTISSEMENT = CHARGE_AMORTISSEMENT_MX + CHARGE_AMORTISSEMENT_MY
 
 COUTS_VAR_MAX = (
-    25 * (DECI["PROD"]["Elite"] + DECI["PROD"]["2000"] + DECI["PROD"]["Raquette"])
-) / 1000
+    VAR_MAX * (DECI["PROD"]["Elite"] + DECI["PROD"]["2000"] + DECI["PROD"]["Raquette"])
+)
 
 VAR_STOCKS_PREV = ceil(
     (
         (
-            (ACTU["STOCKSPF"]["Elite"] + DECI["PROD"]["Elite"])
+            (ACTU["STOCKSPF"]["Elite"]/1000 + DECI["PROD"]["Elite"])
             * (100 - DECI["PREV_VOLUME_VENTE"]["Elite"])
             / 100
-            - ACTU["STOCKSPF"]["Elite"]
+            - ACTU["STOCKSPF"]["Elite"]/1000
         )
         * DECI["PRIX"]["Elite"]
         + (
-            (ACTU["STOCKSPF"]["2000"] + DECI["PROD"]["2000"])
+            (ACTU["STOCKSPF"]["2000"]/1000 + DECI["PROD"]["2000"])
             * (100 - DECI["PREV_VOLUME_VENTE"]["2000"])
             / 100
-            - ACTU["STOCKSPF"]["2000"]
+            - ACTU["STOCKSPF"]["2000"]/1000
         )
         * DECI["PRIX"]["2000"]
         + (
-            (ACTU["STOCKSPF"]["Raquette"] + DECI["PROD"]["Raquette"])
+            (ACTU["STOCKSPF"]["Raquette"]/1000 + DECI["PROD"]["Raquette"])
             * (100 - DECI["PREV_VOLUME_VENTE"]["Raquette"])
             / 100
-            - ACTU["STOCKSPF"]["Raquette"]
+            - ACTU["STOCKSPF"]["Raquette"]/1000
         )
         * DECI["PRIX"]["Raquette"]
     )
-    / 1000
 )
-
 DECAISSEMENT = 0
+
+CHARGES_ADMINISTRATIVES = ADMINISTRATION + DECI["QVT"] + 10*(DECI["ETUDE"]["SKI"]+DECI["ETUDE"]["Raquette"]) + DECI["ETUDE"]["ANALYTIQUE"]*250
 
 
 def NB_MAT():
@@ -113,16 +114,24 @@ def NB_MAT():
     ]
     return RES
 
+def COUT_MAT_TEST(a, b):
+    MAT =  NB_MAT()
+    RES = ((MAT[0]+a)*(DECI["PRIX_MATERIAUX"][2]*DECI["RECYCLE"]["FIBRE"]/100 + DECI["PRIX_MATERIAUX"][0]*(100-DECI["RECYCLE"]["FIBRE"])/100) + (MAT[1]+b)*(DECI["PRIX_MATERIAUX"][3]*DECI["RECYCLE"]["RESINE"]/100 + DECI["PRIX_MATERIAUX"][1]*(100-DECI["RECYCLE"]["RESINE"])/100))
+    return ceil(RES)
 
 def COUT_MAT_ACTU():
     RES = 0
     RES += (
-        PRIX_MATERIAUX[0] * (100 - ACTU["STOCKS_ACHETE"]["RECYCLE_FIBRE"]) / 100
-        + ACTU["STOCKS_ACHETE"]["RECYCLE_FIBRE"] / 100 * PRIX_MATERIAUX[2]
-    )*ACTU["STOCKS_ACHETE"]["FIBRE"] + (
-        PRIX_MATERIAUX[1] * (100 - ACTU["STOCKS_ACHETE"]["RECYCLE_RESINE"]) / 100
-        + ACTU["STOCKS_ACHETE"]["RECYCLE_RESINE"] / 100 * PRIX_MATERIAUX[3]
-    )*ACTU["STOCKS_ACHETE"]["RESINE"]
+        ACTU["PRIX_MATERIAUX"][0] * (100 - ACTU["STOCKS_ACHETE"]["RECYCLE_FIBRE"]) / 100
+        + ACTU["STOCKS_ACHETE"]["RECYCLE_FIBRE"] / 100 * ACTU["PRIX_MATERIAUX"][2]
+    ) * ACTU["STOCKS_ACHETE"]["FIBRE"] + (
+        ACTU["PRIX_MATERIAUX"][1] * (100 - ACTU["STOCKS_ACHETE"]["RECYCLE_RESINE"]) / 100
+        + ACTU["STOCKS_ACHETE"]["RECYCLE_RESINE"] / 100 * ACTU["PRIX_MATERIAUX"][3]
+    ) * ACTU[
+        "STOCKS_ACHETE"
+    ][
+        "RESINE"
+    ]
 
     RES = ceil(RES)
     return RES
@@ -134,54 +143,48 @@ def COUT_MAT_PREV():
         (
             16
             * (
-                PRIX_MATERIAUX[0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
-                + DECI["RECYCLE"]["FIBRE"] / 100 * PRIX_MATERIAUX[2]
+                DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+                + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
             )
             + 4
             * (
-                PRIX_MATERIAUX[1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
-                + DECI["RECYCLE"]["RESINE"] / 100 * PRIX_MATERIAUX[3]
+                DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+                + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
             )
         )
         * DECI["PROD"]["Elite"]
-        * DECI["PREV_VOLUME_VENTE"]["Elite"]
-        / 100
     )
     RES += (
         (
             DECI["QUALITE"]
             / 5
             * (
-                PRIX_MATERIAUX[0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
-                + DECI["RECYCLE"]["FIBRE"] / 100 * PRIX_MATERIAUX[2]
+                DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+                + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
             )
             + (100 - DECI["QUALITE"])
             / 5
             * (
-                PRIX_MATERIAUX[1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
-                + DECI["RECYCLE"]["RESINE"] / 100 * PRIX_MATERIAUX[3]
+                DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+                + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
             )
         )
         * DECI["PROD"]["2000"]
-        * DECI["PREV_VOLUME_VENTE"]["2000"]
-        / 100
     )
     RES += (
         (
             5
             * (
-                PRIX_MATERIAUX[0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
-                + DECI["RECYCLE"]["FIBRE"] / 100 * PRIX_MATERIAUX[2]
+                DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+                + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
             )
             + 5
             * (
-                PRIX_MATERIAUX[1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
-                + DECI["RECYCLE"]["RESINE"] / 100 * PRIX_MATERIAUX[3]
+                DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+                + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
             )
         )
         * DECI["PROD"]["Raquette"]
-        * DECI["PREV_VOLUME_VENTE"]["Raquette"]
-        / 100
     )
     RES = ceil(RES)
     return RES
@@ -194,10 +197,11 @@ def CALCUL_COUT_PROD_PREV():
         + DECI["R&D"]
         + CHARGE_AMORTISSEMENT
         + DECI["PROD_ECO"]
-        + VAR_STOCKS_PREV
+        # + VAR_STOCKS_PREV
         + COUT_MAT_PREV()
     )
     return RES
+
 
 
 def CALCUL_PRIX_UNITAIRE_PREV():
@@ -220,29 +224,84 @@ def CALCUL_PRIX_UNITAIRE_PREV():
         if DECI["PROD"]["Raquette"] != 0
         else 0
     )
-    PRIX_ELITE += COUT_PROD_PREV / DECI_PROD_TOT_PREV
-    PRIX_2000 += COUT_PROD_PREV / DECI_PROD_TOT_PREV
-    PRIX_RAQUETTE += COUT_PROD_PREV / DECI_PROD_TOT_PREV
+    PRIX_ELITE += COUT_PROD_PREV / DECI_PROD_TOT_PREV if DECI["PROD"]["Elite"] != 0 else 0
+    PRIX_2000 += COUT_PROD_PREV / DECI_PROD_TOT_PREV if DECI["PROD"]["2000"] != 0 else 0
+    PRIX_RAQUETTE += COUT_PROD_PREV / DECI_PROD_TOT_PREV if DECI["PROD"]["Raquette"] != 0 else 0
     PRIX_ELITE += 16 * (
-        PRIX_MATERIAUX[0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
-        + DECI["RECYCLE"]["FIBRE"] / 100 * PRIX_MATERIAUX[2]
+        DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+        + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
     ) + 4 * (
-        PRIX_MATERIAUX[1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
-        + DECI["RECYCLE"]["RESINE"] / 100 * PRIX_MATERIAUX[3]
+        DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+        + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
     )
     PRIX_2000 += DECI["QUALITE"] / 5 * (
-        PRIX_MATERIAUX[0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
-        + DECI["RECYCLE"]["FIBRE"] / 100 * PRIX_MATERIAUX[2]
+        DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+        + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
     ) + (100 - DECI["QUALITE"]) / 5 * (
-        PRIX_MATERIAUX[1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
-        + DECI["RECYCLE"]["RESINE"] / 100 * PRIX_MATERIAUX[3]
+        DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+        + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
     )
     PRIX_RAQUETTE += 5 * (
-        PRIX_MATERIAUX[0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
-        + DECI["RECYCLE"]["FIBRE"] / 100 * PRIX_MATERIAUX[2]
+        DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+        + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
     ) + 5 * (
-        PRIX_MATERIAUX[1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
-        + DECI["RECYCLE"]["RESINE"] / 100 * PRIX_MATERIAUX[3]
+        DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+        + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
+    )
+    PRIX_ELITE = "{:.2f}".format(PRIX_ELITE)
+    PRIX_2000 = "{:.2f}".format(PRIX_2000)
+    PRIX_RAQUETTE = "{:.2f}".format(PRIX_RAQUETTE)
+
+    print(
+        "PRIX ELITE,    PRIX 2000,    PRIX RAQUETTE \n",
+        [PRIX_ELITE, PRIX_2000, PRIX_RAQUETTE],
+        "\n",
+    )
+    return [PRIX_ELITE, PRIX_2000, PRIX_RAQUETTE]
+
+def CALCUL_PRIX_UNITAIRE_PREV_V2():
+    COUT_PROD_PREV = CALCUL_COUT_PROD_PREV() - COUT_MAT_PREV()
+    PRIX_ELITE = (
+        DECI["PUB"]["Elite"]
+        / DECI["PROD"]["Elite"]
+        if DECI["PROD"]["Elite"] != 0
+        else 0
+    )
+    PRIX_2000 = (
+        DECI["PUB"]["2000"]
+        / DECI["PROD"]["2000"]
+        if DECI["PROD"]["2000"] != 0
+        else 0
+    )
+    PRIX_RAQUETTE = (
+        DECI["PUB"]["Raquette"]
+        / DECI["PROD"]["Raquette"]
+        if DECI["PROD"]["Raquette"] != 0
+        else 0
+    )
+    PRIX_ELITE += COUT_PROD_PREV / DECI_PROD_TOT_PREV if DECI["PROD"]["Elite"] != 0 else 0
+    PRIX_2000 += COUT_PROD_PREV / DECI_PROD_TOT_PREV if DECI["PROD"]["2000"] != 0 else 0
+    PRIX_RAQUETTE += COUT_PROD_PREV / DECI_PROD_TOT_PREV if DECI["PROD"]["Raquette"] != 0 else 0
+    PRIX_ELITE += 16 * (
+        DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+        + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
+    ) + 4 * (
+        DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+        + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
+    )
+    PRIX_2000 += DECI["QUALITE"] / 5 * (
+        DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+        + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
+    ) + (100 - DECI["QUALITE"]) / 5 * (
+        DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+        + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
+    )
+    PRIX_RAQUETTE += 5 * (
+        DECI["PRIX_MATERIAUX"][0] * (100 - DECI["RECYCLE"]["FIBRE"]) / 100
+        + DECI["RECYCLE"]["FIBRE"] / 100 * DECI["PRIX_MATERIAUX"][2]
+    ) + 5 * (
+        DECI["PRIX_MATERIAUX"][1] * (100 - DECI["RECYCLE"]["RESINE"]) / 100
+        + DECI["RECYCLE"]["RESINE"] / 100 * DECI["PRIX_MATERIAUX"][3]
     )
     PRIX_ELITE = "{:.2f}".format(PRIX_ELITE)
     PRIX_2000 = "{:.2f}".format(PRIX_2000)
@@ -284,43 +343,57 @@ def CALCUL_PROD_TOT_MY():
     return [MACHINES, MACHINES_SURCHARGE]
 
 
-
 def CA_PREV():
     RES = 0
     RES += (
         DECI["PRIX"]["Elite"]
         * DECI["PREV_VOLUME_VENTE"]["Elite"]
         / 100
-        * (DECI["PROD"]["Elite"] + ACTU["STOCKSPF"]["Elite"])
+        * (DECI["PROD"]["Elite"] + ACTU["STOCKSPF"]["Elite"]/1000)
         + DECI["PRIX"]["2000"]
-        * (DECI["PROD"]["2000"] + ACTU["STOCKSPF"]["2000"])
+        * (DECI["PROD"]["2000"] + ACTU["STOCKSPF"]["2000"]/1000)
         * DECI["PREV_VOLUME_VENTE"]["2000"]
         / 100
         + DECI["PRIX"]["Raquette"]
-        * (DECI["PROD"]["Raquette"] + ACTU["STOCKSPF"]["2000"])
+        * (DECI["PROD"]["Raquette"] + ACTU["STOCKSPF"]["Raquette"]/1000)
         * DECI["PREV_VOLUME_VENTE"]["Raquette"]
         / 100
     )
-    print("CA Prévisionnel : ", ceil(RES))
     return ceil(RES)
 
 
 def CA_EXACT():
-    print(
-        "CA Exact Période Passée: ",
-        ceil(
-            (
-                ACTU["PRIX"]["Elite"] * ACTU["VENTES"]["Elite"]
-                + ACTU["PRIX"]["2000"] * ACTU["VENTES"]["2000"]
-                + ACTU["PRIX"]["Raquette"] * ACTU["VENTES"]["Raquette"]
-            )
-            / 1000
-        ),
-        "\n",
+    RES = (
+        ACTU["PRIX"]["Elite"] * ACTU["VENTES"]["Elite"]
+        + ACTU["PRIX"]["2000"] * ACTU["VENTES"]["2000"]
+        + ACTU["PRIX"]["Raquette"] * ACTU["VENTES"]["Raquette"]
     )
+    return ceil((RES) / 1000)
 
-DECAISSEMENT = COUT_MAT_ACTU() + 2500*DECI["NEW_MX"] + 2000*DECI["NEW_MY"] + COUT_MAIN_DOEUVRE + COUT_COMMERCIAUX + ADMINISTRATION #(+IMPOTS+emprunts etc) + Bon de caisse
-ENCAISSEMENT = (100-ACTU["ESCOMPTE"])/100 * CA_EXACT() + DECI["ESCOMPTE"]/100 * CA_PREV() + DECI["EMPRUNTS"]["CT"] + DECI["EMPRUNTS"]["LT"] + ACTU["TREZO"] #+Bons de caisse 
+
+DECAISSEMENT = (
+    COUT_MAT_ACTU()
+    + 2500 * DECI["NEW_MX"]
+    + 2000 * DECI["NEW_MY"]
+    + COUT_MAIN_DOEUVRE
+    + COUT_COMMERCIAUX
+    + ADMINISTRATION
+    + ACTU["EMPRUNT"]
+)
+ENCAISSEMENT = (
+    (100 - ACTU["ESCOMPTE"]) / 100 * CA_EXACT()
+    + DECI["ESCOMPTE"] / 100 * CA_PREV()
+    + DECI["EMPRUNTS"]["CT"]
+    + DECI["EMPRUNTS"]["LT"]
+    + ACTU["TREZO"]
+)
+BENEF_PREV = ceil((CA_PREV() - CALCUL_COUT_PROD_PREV() - CHARGES_ADMINISTRATIVES)*(0.7 if (CA_PREV() - CALCUL_COUT_PROD_PREV()-CHARGES_ADMINISTRATIVES) > 0 else 1))
+TREZO_FUTURE = ENCAISSEMENT - DECAISSEMENT
+DECAISSEMENT += TREZO_FUTURE
+ARGENT_DISPO_ACTU = ceil(ACTU["TREZO"]+(100 - ACTU["ESCOMPTE"]) / 100 * CA_EXACT())
+COUTS_ACTUELS = CALCUL_COUT_PROD_PREV() + COUT_COMMERCIAUX + CHARGES_ADMINISTRATIVES + COUT_MAT_ACTU() + 2500 * DECI["NEW_MX"] + 2000 * DECI["NEW_MY"] - COUT_MAT_PREV() + ACTU["EMPRUNT"] + DECI["DIVIDENDE"]
+
+
 print("Couts ouvriers : ", COUT_MAIN_DOEUVRE)
 print("COUT_COMMERCIAUX : ", COUT_COMMERCIAUX)
 print("\n")
@@ -334,19 +407,32 @@ print(
     "Nombre NEW Ouvrier MAXX : ", ceil((mx[1] + my[1]) / 200) - ACTU["OUVRIERS"], "\n"
 )
 CALCUL_PRIX_UNITAIRE_PREV()
+CALCUL_PRIX_UNITAIRE_PREV_V2()
 
 print("Nombre Matériaux : ", NB_MAT(), "\n")
 
-CA_PREV()
-CA_EXACT()
+print("CA Prévisionnel : ", ceil(CA_PREV()))
+print("CA Exact Période Passée: ", CA_EXACT(), "\n")
+
 print("Amortissement MX : ", AMORTISSEMENT_MX)
 print("Amortissement MY : ", AMORTISSEMENT_MY_FUTUR)
 print("Charge Amortissement MX : ", CHARGE_AMORTISSEMENT_MX)
 print("Charge Amortissement MY : ", CHARGE_AMORTISSEMENT_MY)
-print("Charge Amortissement : ", CHARGE_AMORTISSEMENT_MX + CHARGE_AMORTISSEMENT_MY)
+print("Charge Amortissement : ", CHARGE_AMORTISSEMENT_MX + CHARGE_AMORTISSEMENT_MY, "\n")
 
-print("Couts Production Prévisionnel : ", CALCUL_COUT_PROD_PREV())
-print("Couts Matériaux Prévisionnel : ", COUT_MAT_PREV())
-print("Couts Matériaux Actuel : ", COUT_MAT_ACTU())
-print("Décaissement : ", DECAISSEMENT)
-print("Encaissement : ", ENCAISSEMENT)
+print("Couts PRODUCTION Prévisionnel : ", CALCUL_COUT_PROD_PREV(), "\n")
+
+print("Couts MATERIAUX Prévisionnel : ", COUT_MAT_PREV(), " VERIF : ", COUT_MAT_TEST(-1100, -1675))
+print("Couts MATERIAUX Actuel : ", COUT_MAT_ACTU(), "\n")
+
+print("Décaissement : ", ceil(DECAISSEMENT))
+print("Encaissement : ", ceil(ENCAISSEMENT), "\n")
+
+print("Tresorerie Actuelle : ", ACTU["TREZO"])
+print("Trésorerie Future : ", ceil(TREZO_FUTURE), "\n")
+
+print("Argent Dispo : ", ARGENT_DISPO_ACTU)
+print("Couts ACTUELS : ", COUTS_ACTUELS)
+print("Couts Argent Dispo (escompte) : ", ARGENT_DISPO_ACTU, "\n")
+
+print("Bénéfice Possible : ", BENEF_PREV)
